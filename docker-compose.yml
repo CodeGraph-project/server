@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   postgres:
     image: pgvector/pgvector:pg18
     container_name: codegraph_postgres
     ports:
-      - "5432:5432"
+      - "5435:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -25,3 +23,4 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
