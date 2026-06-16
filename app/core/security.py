@@ -1,8 +1,10 @@
 import jwt
+from jwt import InvalidTokenError, ExpiredSignatureError
+import uuid
 from pwdlib import PasswordHash
-from fastapi import HTTPException, status
 from datetime import datetime, timedelta, timezone
 from app.core.config import settings
+from app.core.redis import RedisDep
 
 
 class SecurityHandler:
@@ -35,14 +37,21 @@ class SecurityHandler:
             token_type="access"
         )
 
-    def create_refresh_token(self, data: dict) -> str:
-        return self._create_token(
-            data=data,
-            expires_delta=timedelta(minutes=self.REFRESH_TOKEN_EXPIRE_DAYS),
+    def create_refresh_token(self, data: dict) -> tuple[str, str]:
+        jti = str(uuid.uuid4())
+        token = self._create_token(
+            data={**data, "jti": jti},
+            expires_delta=timedelta(days=self.REFRESH_TOKEN_EXPIRE_DAYS),
             token_type="refresh"
         )
+        return token, jti
 
-    def decode_token(self, token: str) -> dict:
-        pass
+    async def decode_token(self, token: str, jti: str, redis_client: RedisDep) -> dict:
+        try:
+            return jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
+        except ExpiredSignatureError:
+            pass
+        except InvalidTokenError:
+            pass
 
 security_handler = SecurityHandler()
