@@ -1,7 +1,6 @@
 import jwt
 from jwt import InvalidTokenError, ExpiredSignatureError
 import uuid
-from pwdlib import PasswordHash
 from datetime import datetime, timedelta, timezone
 from app.core.config import settings
 from app.core.redis import RedisDep
@@ -9,18 +8,11 @@ from app.core.redis import RedisDep
 
 class SecurityHandler:
     def __init__(self):
-        self.pwd_context = PasswordHash.recommended()
 
         self.SECRET_KEY = settings.SECRET_KEY
         self.ALGORITHM = "HS256"
         self.ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
         self.REFRESH_TOKEN_EXPIRE_DAYS = settings.REFRESH_TOKEN_EXPIRE_DAYS
-
-    def get_password_hash(self, password: str) -> str:
-        return self.pwd_context.hash(password)
-
-    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
-        return self.pwd_context.verify(plain_password, hashed_password)
 
     def _create_token(self, data: dict, expires_delta: timedelta ,token_type: str) -> str:
         to_encode = data.copy()
@@ -46,7 +38,7 @@ class SecurityHandler:
         )
         return token, jti
 
-    async def decode_token(self, token: str, jti: str, redis_client: RedisDep) -> dict:
+    async def decode_token(self, token: str) -> dict:
         try:
             return jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
         except ExpiredSignatureError:
