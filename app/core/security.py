@@ -3,7 +3,6 @@ from jwt import InvalidTokenError, ExpiredSignatureError
 import uuid
 from datetime import datetime, timedelta, timezone
 from app.core.config import settings
-from app.core.redis import RedisDep
 
 
 class SecurityHandler:
@@ -42,8 +41,8 @@ class SecurityHandler:
         try:
             return jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
         except ExpiredSignatureError:
-            pass
+            pass # 에러 헨들러 만들면 채움
         except InvalidTokenError:
-            pass
+            pass # 에러 헨들러 만들면 채움
 
 security_handler = SecurityHandler()
