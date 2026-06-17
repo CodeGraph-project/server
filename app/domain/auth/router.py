@@ -17,30 +17,34 @@ async def login(service: AuthServiceDep):
 @auth_router.get("/github/callback")
 async def callback(code: str, state: str, service: AuthServiceDep):
     access, refresh = await service.handle_callback(code, state)
-    resp = RedirectResponse(url=f"{settings.FRONTEND_URL}/auth/callback#access_token={access}")
-    _set_refresh_cookie(resp, refresh)
-    return resp
+    # resp = RedirectResponse(url=f"{settings.FRONTEND_URL}/auth/callback#access_token={access}")
+    # _set_refresh_cookie(resp, refresh)
+    # return resp
+    return {"access_token": access, "refresh_token": refresh} # 스웨거 테스트용
 
 
-@auth_router.post("/refresh", response_model=TokenResponse)
+@auth_router.post("/refresh")#, response_model=TokenResponse)
 async def refresh(
         service: AuthServiceDep,
-        response: Response,
-        refresh_token: str | None = Cookie(default=None)
+        # response: Response,
+        # refresh_token: str | None = Cookie(default=None)
+        refresh_token: str # 스웨거 테스트용
 ):
     access, new_refresh = await service.refresh(refresh_token)
-    _set_refresh_cookie(response, new_refresh)
-    return TokenResponse(access_token=access)
+    # _set_refresh_cookie(response, new_refresh)
+    # return TokenResponse(access_token=access)
+    return {"access_token": access, "refresh_token": new_refresh} # 스웨거 테스트용
 
 
 @auth_router.post("/logout")
 async def logout(
         service: AuthServiceDep,
-        response: Response,
-        refresh_token: str | None = Cookie(default=None)
+        # response: Response,
+        # refresh_token: str | None = Cookie(default=None)
+        refresh_token: str # 스웨거 테스트용
 ):
     await service.logout(refresh_token)
-    response.delete_cookie(key="refresh_token", path="/auth")
+    # response.delete_cookie(key="refresh_token", path="/auth")
     return {"message": 'logout'}
 
 

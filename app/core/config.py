@@ -8,6 +8,12 @@ class Settings(BaseSettings):
     DB_HOST: str
     DB_PORT: str
 
+    NEO4J_AUTH: str
+    GITHUB_CLIENT_ID: str
+    GITHUB_CLIENT_SECRET: str
+    GITHUB_REDIRECT_URI: str
+    FRONTEND_URL: str
+
     DATABASE_URL: str | None = None
     REDIS_URL: str
 

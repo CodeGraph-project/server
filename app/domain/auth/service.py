@@ -27,7 +27,7 @@ class AuthService:
         github_token = await self.github.exchange_code(code)
         github_user = await self.github.fetch_user(github_token)
 
-        user = await self.user_repo.get_user_by_github_id(github_user['id'])
+        user = await self.user_repo.get_by_github_id(github_user['id'])
         if user is None:
             user = await self.user_repo.create(User(
                 github_id=github_user['id'],
@@ -50,7 +50,7 @@ class AuthService:
             pass  # 에러 헨들러 만들면 채움
         await self.redis.delete(f"refresh_jti:{jti}")
 
-        user = await self.user_repo.get_user_by_github_id(int(payload['sub']))
+        user = await self.user_repo.get_user_by_id(int(payload['sub']))
         if not user:
             pass # 에러 헨들러 만들면 채움
         return await self._issue_tokens(user)

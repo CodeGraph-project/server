@@ -10,7 +10,7 @@ from app.core.config import settings
 from sqlmodel import SQLModel
 
 # 여따가 만든 테이블들 다 import
-# from domain.user.models import User
+from app.domain.user.models import User
 
 config = context.config
 
@@ -21,7 +21,7 @@ target_metadata = SQLModel.metadata
 
 
 def run_migrations_offline() -> None:
-    url = settings.DATABASE_URL
+    url = settings.db_url
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -43,7 +43,7 @@ def do_run_migrations(connection):
 async def run_migrations_online() -> None:
 
     configuration = config.get_section(config.config_ini_section) or {}
-    configuration["sqlalchemy.url"] = settings.DATABASE_URL
+    configuration["sqlalchemy.url"] = settings.db_url
 
     connectable = async_engine_from_config(
         configuration,
