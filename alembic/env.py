@@ -9,8 +9,7 @@ from alembic import context
 from app.core.config import settings
 from sqlmodel import SQLModel
 
-# 여따가 만든 테이블들 다 import
-from app.domain.user.models import User
+from app.models import *
 
 config = context.config
 
