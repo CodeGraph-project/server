@@ -37,7 +37,7 @@ class SecurityHandler:
         )
         return token, jti
 
-    async def decode_token(self, token: str) -> dict:
+    def decode_token(self, token: str) -> dict:
         try:
             return jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
         except ExpiredSignatureError:
