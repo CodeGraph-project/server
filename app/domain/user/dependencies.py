@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.core.database import AsyncSessionDep
 from app.core.security import security_handler
-from app.domain.user.models import User, UserRole
+from app.domain.user.models import User
 from app.domain.user.repository import UserRepository
 from app.domain.user.service import UserService
 from app.domain.project.dependencies import GetProjectRepository
@@ -48,13 +48,3 @@ async def get_current_user(
     return user
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
-
-
-def require_role(*allowed: UserRole):
-    async def checker(user: CurrentUser) -> User:
-        if user.role not in allowed:
-            raise HTTPException(status.HTTP_403_FORBIDDEN, "forbidden")
-        return user
-    return checker
-
-CurrentAdmin = Annotated[User, Depends(require_role(UserRole.ADMIN))]
