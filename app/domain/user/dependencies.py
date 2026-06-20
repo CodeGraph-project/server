@@ -6,6 +6,8 @@ from app.core.security import security_handler
 from app.domain.user.models import User, UserRole
 from app.domain.user.repository import UserRepository
 from app.domain.user.service import UserService
+from app.domain.project.dependencies import GetProjectRepository
+from app.domain.scrap.dependencies import GetScrapRepository
 
 
 def get_user_repository(session: AsyncSessionDep) -> UserRepository:
@@ -14,8 +16,12 @@ def get_user_repository(session: AsyncSessionDep) -> UserRepository:
 UserRepositoryDep = Annotated[UserRepository, Depends(get_user_repository)]
 
 
-def get_user_service(user_repo: UserRepositoryDep) -> UserService:
-    return UserService(user_repo)
+def get_user_service(
+    user_repo: UserRepositoryDep,
+    project_repo: GetProjectRepository,
+    scrap_repo: GetScrapRepository,
+) -> UserService:
+    return UserService(user_repo, project_repo, scrap_repo)
 
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
 
