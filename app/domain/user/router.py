@@ -14,11 +14,11 @@ async def get_me(user: CurrentUser, service: UserServiceDep):
     )
 
 
-@user_router.get("/search", response_model=UserSearchItem)
+@user_router.get("/search", response_model=list[UserSearchItem])
 async def search_user(
         user: CurrentUser,
         service: UserServiceDep,
         q: str = Query(..., min_length=1),
-        exclude: list[int] = Query(default=[])
+        exclude_ids: list[int] = Query(default=[])
 ):
-    return await service.search(q=q, exclude=exclude)
+    return await service.search_user(q=q, exclude_ids=exclude_ids)

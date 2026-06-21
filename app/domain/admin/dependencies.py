@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import Depends
+from fastapi import Depends, HTTPException,status
 from app.domain.user.models import User, UserRole
 from app.domain.user.dependencies import UserRepositoryDep, CurrentUser
 from app.domain.admin.service import AdminService
@@ -8,7 +8,7 @@ from app.domain.admin.service import AdminService
 def require_role(*allowed: UserRole):
     async def checker(user: CurrentUser) -> User:
         if user.role not in allowed:
-            pass
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "wow")
         return user
     return checker
 
